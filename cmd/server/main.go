@@ -3,6 +3,7 @@ package main
 import (
 	"aweshore/internal/app/handler"
 	"aweshore/pkg/db"
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
@@ -11,6 +12,12 @@ func main() {
 
 	// Initialize the database
 	db.Init()
+
+	r.Use(cors.New(cors.Config{
+		AllowOrigins: []string{"http://localhost:5173"},
+		AllowMethods: []string{"GET", "POST", "PUT", "PATCH", "DELETE"},
+		AllowHeaders: []string{"Origin", "Content-Type"},
+	}))
 
 	// Routes
 	r.POST("/notes", handler.CreateNote)

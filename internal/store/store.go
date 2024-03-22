@@ -55,7 +55,7 @@ func (s *noteStore) GetByID(id int64) (*model.Note, error) {
 func (s *noteStore) GetAll() ([]model.Note, error) {
 	rows, err := s.db.Query("SELECT id, title, content, created, updated FROM notes")
 	if err != nil {
-		return nil, err
+		return []model.Note{}, err
 	}
 	defer rows.Close()
 
@@ -66,6 +66,9 @@ func (s *noteStore) GetAll() ([]model.Note, error) {
 			return nil, err
 		}
 		notes = append(notes, n)
+	}
+	if notes == nil {
+		notes = []model.Note{}
 	}
 	return notes, nil
 }
