@@ -14,6 +14,9 @@ type NoteStore interface {
 	GetAll() ([]model.Note, error)
 	Update(id int64, note model.Note) error
 	Delete(id int64) error
+	GetLastIdByOffset(offset int) (int64, error)
+	GetPaginated(lastId int64, pageSize int) ([]model.Note, error)
+	Count() (int, error)
 }
 
 type noteStore struct {
@@ -50,6 +53,37 @@ func (s *noteStore) GetByID(id int64) (*model.Note, error) {
 		return nil, err
 	}
 	return note, nil
+}
+
+func (s *noteStore) Count() (int, error) {
+	var count int
+	err := s.db.QueryRow("SELECT COUNT(*) FROM notes").Scan(&count)
+	return count, err
+}
+
+// noteStore struct implementation
+func (s *noteStore) GetLastIdByOffset(offset int) (int64, error) {
+	var lastId int64
+	err := s.db.QueryRow("SELECT id FROM notes ORDER BY id LIMIT 1 OFFSET ?", offset).Scan(&lastId)
+	return lastId, err
+}
+
+func (s *noteStore) GetPaginated(lastId int64, pageSize int) ([]model.Note, error) {
+	rows, err := s.db.Query("SELECT id, title, content, created, updated FROM notes WHERE id > ? ORDER BY id LIMIT ?", lastId, pageSize)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var notes []model.Note
+	for rows.Next() {
+		var note model.Note
+		if err = rows.Scan(&note.ID, &note.Title, &note.Content, &note.Created, &note.Updated); err != nil {
+			return nil, err
+		}
+		notes = append(notes, note)
+	}
+	return notes, nil
 }
 
 func (s *noteStore) GetAll() ([]model.Note, error) {

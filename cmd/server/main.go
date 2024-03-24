@@ -22,7 +22,7 @@ func main() {
 	// Routes
 	r.POST("/notes", handler.CreateNote)
 	r.GET("/notes/:id", handler.GetNote)
-	r.GET("/notes", handler.GetAllNotes)
+	r.GET("/notes", handler.GetPaginatedNotes)
 	r.PUT("/notes/:id", handler.UpdateNote)
 	r.DELETE("/notes/:id", handler.DeleteNote)
 
