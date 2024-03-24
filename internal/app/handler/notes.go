@@ -31,8 +31,12 @@ func CreateNote(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-
-	c.JSON(http.StatusOK, gin.H{"id": id})
+	savedNote, err := GetNoteStore().GetByID(id)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, savedNote)
 }
 
 // GetNote handles GET requests to retrieve a note by its ID
