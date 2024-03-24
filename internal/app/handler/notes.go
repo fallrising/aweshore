@@ -59,7 +59,6 @@ func GetNote(c *gin.Context) {
 func GetPaginatedNotes(c *gin.Context) {
 	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
 	pageSize, _ := strconv.Atoi(c.DefaultQuery("pageSize", "10"))
-	lastIdParam := c.DefaultQuery("lastId", "")
 
 	var lastId int64
 	var err error
@@ -80,19 +79,15 @@ func GetPaginatedNotes(c *gin.Context) {
 		page = totalPages
 	}
 
-	if lastIdParam == "" && page > 1 {
-		offset := (page-1)*pageSize - 1
+	if page != 1 {
+		offset := (page - 1) * pageSize
 		lastId, err = GetNoteStore().GetLastIdByOffset(offset)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to calculate last ID"})
 			return
 		}
-	} else if lastIdParam != "" {
-		lastId, err = strconv.ParseInt(lastIdParam, 10, 64)
-		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid last ID format"})
-			return
-		}
+	} else {
+		lastId = 0
 	}
 
 	notes, err := GetNoteStore().GetPaginated(lastId, pageSize)
@@ -107,6 +102,7 @@ func GetPaginatedNotes(c *gin.Context) {
 		"currentPage": page,
 		"pageSize":    pageSize,
 		"totalCount":  totalCount,
+		"lastId":      lastId,
 	})
 }
 

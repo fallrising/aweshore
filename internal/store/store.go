@@ -69,7 +69,7 @@ func (s *noteStore) GetLastIdByOffset(offset int) (int64, error) {
 }
 
 func (s *noteStore) GetPaginated(lastId int64, pageSize int) ([]model.Note, error) {
-	rows, err := s.db.Query("SELECT id, title, content, created, updated FROM notes WHERE id > ? ORDER BY id LIMIT ?", lastId, pageSize)
+	rows, err := s.db.Query("SELECT id, title, content, created, updated FROM notes WHERE id >= ? ORDER BY id LIMIT ?", lastId, pageSize)
 	if err != nil {
 		return nil, err
 	}
