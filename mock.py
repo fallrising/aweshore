@@ -32,7 +32,7 @@ if __name__ == '__main__':
         data_batch = []
 
         # Generate and insert 1 million records
-        for _ in range(100000):
+        for _ in range(10000000):
             data = generate_random_data()
             data_batch.append(data)
 
