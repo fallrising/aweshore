@@ -1,11 +1,13 @@
 package handler
 
 import (
+	"aweshore/internal/dto"
 	"aweshore/internal/model"
 	"aweshore/internal/store"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"
+	"time"
 )
 
 // noteStore will be our interface to the notes storage.
@@ -96,8 +98,15 @@ func GetPaginatedNotes(c *gin.Context) {
 		return
 	}
 
+	// build a slice of NoteDTO
+	var notesDTO []dto.NoteDTO
+	// iterate over notes and convert each note to NoteDTO
+	for _, note := range notes {
+		notesDTO = append(notesDTO, NoteToDTO(note))
+	}
+
 	c.JSON(http.StatusOK, gin.H{
-		"notes":       notes,
+		"notes":       notesDTO,
 		"totalPages":  totalPages,
 		"currentPage": page,
 		"pageSize":    pageSize,
@@ -155,4 +164,16 @@ func DeleteNote(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"message": "Note deleted successfully"})
+}
+
+func NoteToDTO(note model.Note) dto.NoteDTO {
+	return dto.NoteDTO{
+		ID:         note.ID,
+		Title:      note.Title,
+		Content:    note.Content,
+		NoteTypeID: note.NoteTypeID,
+		Created:    note.Created.Format(time.RFC3339),
+		Updated:    note.Updated.Format(time.RFC3339),
+		Status:     note.Status,
+	}
 }
