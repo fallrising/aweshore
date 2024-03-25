@@ -140,9 +140,7 @@ content TEXT,
 note_type_id INTEGER,
 created DATETIME NOT NULL,
 updated DATETIME NOT NULL,
-status TEXT NOT NULL DEFAULT 'active' CHECK(status IN ('active', 'deleted')),
-FOREIGN KEY (note_type_id) REFERENCES note_types(id),
-FOREIGN KEY (user_id) REFERENCES users(id)
+status TEXT NOT NULL DEFAULT 'active' CHECK(status IN ('active', 'deleted'))
 );
 
 -- attachments table
@@ -181,27 +179,21 @@ note_type_id INTEGER,
 note_id INTEGER NOT NULL,
 created DATETIME NOT NULL,
 updated DATETIME NOT NULL,
-status TEXT NOT NULL DEFAULT 'active' CHECK(status IN ('active', 'deleted')),
-FOREIGN KEY (note_type_id) REFERENCES note_types(id),
-FOREIGN KEY (note_id) REFERENCES notes(id)
+status TEXT NOT NULL DEFAULT 'active' CHECK(status IN ('active', 'deleted'))
 );
 
 -- notes_attachments table
 CREATE TABLE notes_attachments (
 note_id INTEGER NOT NULL,
 attachment_id INTEGER NOT NULL,
-PRIMARY KEY (note_id, attachment_id),
-FOREIGN KEY (note_id) REFERENCES notes(id),
-FOREIGN KEY (attachment_id) REFERENCES attachments(id)
+PRIMARY KEY (note_id, attachment_id)
 );
 
 -- notes_tags table
 CREATE TABLE notes_tags (
 note_id INTEGER NOT NULL,
 tag_id INTEGER NOT NULL,
-PRIMARY KEY (note_id, tag_id),
-FOREIGN KEY (note_id) REFERENCES notes(id),
-FOREIGN KEY (tag_id) REFERENCES tags(id)
+PRIMARY KEY (note_id, tag_id)
 );
 
 CREATE TABLE user_notes (
@@ -209,6 +201,4 @@ id INTEGER PRIMARY KEY AUTOINCREMENT,
 user_id INTEGER NOT NULL,
 note_id INTEGER NOT NULL,
 created_at DATETIME NOT NULL,  -- Example of additional metadata
-FOREIGN KEY (user_id) REFERENCES users(id),
-FOREIGN KEY (note_id) REFERENCES notes(id)
 );```

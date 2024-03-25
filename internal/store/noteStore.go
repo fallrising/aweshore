@@ -1,7 +1,7 @@
 package store
 
 import (
-	"aweshore/internal/model" // Make sure this import path matches the module name and path in your project
+	"aweshore/internal/model"
 	"aweshore/pkg/db"
 	"database/sql"
 	"time"
